@@ -1,4 +1,5 @@
-import java.util.HashMap;
+import java.util.*;
+import java.io.*;
 
 public class BB {
 
@@ -6,12 +7,24 @@ public class BB {
 
     public static void main(String[] args) {
         BB myBB = new BB();
-        Expr block1 = new VariableOperation(0, "A", myBB);
-        Expr block2 = new VariableOperation(1, "A", myBB);
-        Expr block3 = new VariableOperation(2,"A",myBB);
-        block1.execute();
-        block2.execute();
-        block3.execute();
+
+
+
+        Expr root = new ExecutableBlock(myBB);
+        root.addNewBlock(new VariableOperation(0, "A", myBB));
+        root.addNewBlock(new VariableOperation(1, "A", myBB));
+        root.addNewBlock(new VariableOperation(1, "A", myBB));
+        root.addNewBlock(new VariableOperation(0, "B", myBB));
+
+        ExecutableBlock loopList = new ExecutableBlock(myBB);
+        loopList.addNewBlock(new VariableOperation(2, "A", myBB));
+        loopList.addNewBlock(new VariableOperation(1, "B", myBB));
+        root.addNewBlock(new LoopExpression("A", 0, loopList, myBB));
+
+        root.execute();
+        
+
+
 
 
 
