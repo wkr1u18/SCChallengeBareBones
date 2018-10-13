@@ -2,18 +2,23 @@ import java.util.*;
 import java.io.*;
 
 public class BB {
-
+    //variables list
     public HashMap<String, Integer> variablesList = new HashMap<String,Integer>();
     public File inputFile;
     public Scanner fileInput;
 
+    //methods to handle file
     public void openFile(String fileName) throws FileNotFoundException {
         inputFile = new File(fileName);
         fileInput = new Scanner(inputFile);
     }
-
+    //get next source code line
     public String getSourceLine() {
-        return fileInput.nextLine();
+        if (fileInput.hasNext()) {
+            String sourceLine = fileInput.nextLine();
+            return sourceLine.trim();
+        }
+        return ""; //if no source line, return empty string, to be recognized by lexer as end of program
     }
 
     public void closeFile() {
@@ -23,26 +28,14 @@ public class BB {
     public static void main(String[] args) throws FileNotFoundException {
         BB myBB = new BB();
         Lexer myLexer = new Lexer(myBB);
-        myBB.openFile("example.txt");
-        ExecutableBlock root = myLexer.parse();
-        root.execute();
-        //Expr block = myLexer.analiseLine("clear A;");
-        //block.execute();
+        System.out.println("Welcome to Bare Bones interpreter, enter the path to source code file:");
+        Scanner textInput = new Scanner(System.in);
+        String path = textInput.nextLine();
+        myBB.openFile(path);
+
+        ExecutableBlock root = myLexer.parse(); //create executable node from parsed source code
+        root.execute(); //execute the master node
         myBB.closeFile();
-        /*
-        Expr root = new ExecutableBlock(myBB);
-        root.addNewBlock(new VariableOperation(0, "A", myBB));
-        root.addNewBlock(new VariableOperation(1, "A", myBB));
-        root.addNewBlock(new VariableOperation(1, "A", myBB));
-        root.addNewBlock(new VariableOperation(0, "B", myBB));
-
-        ExecutableBlock loopList = new ExecutableBlock(myBB);
-        loopList.addNewBlock(new VariableOperation(2, "A", myBB));
-        loopList.addNewBlock(new VariableOperation(1, "B", myBB));
-        root.addNewBlock(new LoopExpression("A", 0, loopList, myBB));
-
-        root.execute();
-        */
     }
 
     public void panic(String errorMessage) {
